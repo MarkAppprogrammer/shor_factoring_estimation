@@ -8,7 +8,7 @@ Last Updated: 1/26/2025
 from math import ceil, isnan, isinf, log
 import matplotlib.pyplot as plt
 import datetime
-
+import csv
 from itertools import product
 
 from structures import *
@@ -39,69 +39,69 @@ def eh_rsa(n): # Single run.
     m = ceil(n / 2) - 1
     l = m - delta
     n_e = m + 2 * l
-    return n_e #estimate_best(n, n_e, gate_error_rate)
+    return n_e #estimate_best(n, n_e)
 
 
-# def eh_rsa_max_tradeoffs(n, gate_error_rate): # With maximum tradeoffs.
-#     return estimate_best(n, math.ceil(n / 2), gate_error_rate)
+# def eh_rsa_max_tradeoffs(n): # With maximum tradeoffs.
+#     return estimate_best(n, math.ceil(n / 2))
 
 
-# # General DLP
-# def shor_dlp_general(n, gate_error_rate):
-#     delta = 5 # Required to reach 99% success probability.
-#     m = n - 1 + delta
-#     n_e = 2 * m
-#     return n_e
+# General DLP
+def shor_dlp_general(n):
+    delta = 5 # Required to reach 99% success probability.
+    m = n - 1 + delta
+    n_e = 2 * m
+    return n_e
 
 
-# def eh_dlp_general(n, gate_error_rate): # Single run.
+def eh_dlp_general(n): # Single run.
+    m = n - 1
+    n_e = 3 * m
+    return n_e
+
+
+# def eh_dlp_general_max_tradeoffs(n): # Multiple runs with maximal tradeoff.
 #     m = n - 1
-#     n_e = 3 * m
-#     return n_e
+#     n_e = m
+#     return estimate_best(n, n_e)
 
 
-# # def eh_dlp_general_max_tradeoffs(n, gate_error_rate): # Multiple runs with maximal tradeoff.
-# #     m = n - 1
-# #     n_e = m
-# #     return estimate_best(n, n_e, gate_error_rate)
+# Schnorr DLP
+def shor_dlp_schnorr(n):
+    delta = 5 # Required to reach 99% success probability.
+    z = fips_strength_level_rounded(n)
+    m = 2 * z + delta
+    n_e = 2 * m
+    return n_e
 
 
-# # Schnorr DLP
-# def shor_dlp_schnorr(n, gate_error_rate):
-#     delta = 5 # Required to reach 99% success probability.
-#     z = fips_strength_level_rounded(n)
-#     m = 2 * z + delta
-#     n_e = 2 * m
-#     return n_e
+def eh_dlp_schnorr(n): # Single run.
+    z = fips_strength_level_rounded(n)
+    m = 2 * z
+    n_e = 3 * m
+    return n_e
 
 
-# def eh_dlp_schnorr(n, gate_error_rate): # Single run.
-#     z = fips_strength_level_rounded(n)
-#     m = 2 * z
-#     n_e = 3 * m
-#     return n_e
-
-
-# # def eh_dlp_schnorr_max_tradeoffs(n, gate_error_rate): # Multiple runs with maximal tradeoff.
-# #     z = fips_strength_level_rounded(n)
-# #     m = 2 * z
-# #     n_e = m
-# #     return estimate_best(n, n_e, gate_error_rate)
-
-
-# # Short DLP
-# def eh_dlp_short(n, gate_error_rate):
-#     z = fips_strength_level_rounded(n)
-#     m = 2 * z
-#     n_e = 3 * m
-#     return n_e
-
-
-# def eh_dlp_short_max_tradeoffs(n, gate_error_rate): # Multiple runs with maximal tradeoff.
+# def eh_dlp_schnorr_max_tradeoffs(n): # Multiple runs with maximal tradeoff.
 #     z = fips_strength_level_rounded(n)
 #     m = 2 * z
 #     n_e = m
-#     return n_e
+#     return estimate_best(n, n_e)
+
+
+# Short DLP
+def eh_dlp_short(n):
+    z = fips_strength_level_rounded(n)
+    m = 2 * z
+    n_e = 3 * m
+    return n_e
+
+
+def eh_dlp_short_max_tradeoffs(n): # Multiple runs with maximal tradeoff.
+    z = fips_strength_level_rounded(n)
+    m = 2 * z
+    n_e = m
+    return n_e
 
 
 #______Ancillary Functions______
@@ -234,25 +234,41 @@ if __name__ == '__main__':
    #start
 
    #typing.NamedTuple doesn't offer defaults :(
-   params = params(n=2048, n_e=eh_rsa(2048), windowed_exp=None, windowed_mult=None,
-                    cycle_time=1e-6, reaction_time=1e-6, measure_based_uncomp=True,
-                    windowed=True, deviation_padding=None, gate_error_rate=1e-3,
-                    extra_opts=gsOptions(2, None, None)
-    )
-   
-   print("Windowed arithmetics")
-   print("====================")
-   best_params = find_best(params)
-   best_err_corr = CorrectionCode(best_params)
-   cost, qubits = prepare_resources(best_params)
-   print("Best cost:", cost, ";",  qubits)
-   print("Max time between two reading:", best_err_corr.temps_inter_lectures())
-   print("In memory physical qubits:", qubits_in_mem(best_err_corr))
-   print("Full error-correction time:",
-         format_time(correct_all(best_err_corr), True))
-   print("Time if one spatial mode:", format_time(
-      cost.exp_t*memory_limited_time(best_err_corr)/best_params.cycle_time,
-      unicode=True))
+   gate_error_rates = [1e-3, 1e-4]
+   num_bits = [1024, 2048, 3072, 4096, 8192, 12288, 16384]
 
-   
-   
+   datasets = [
+      ("RSA, via Ekera-HÃ¥stad with s = 1 in a single run:", eh_rsa),
+      ("Discrete logarithms, Schnorr group, via Shor:", shor_dlp_schnorr),
+      ("Discrete logarithms, Schnorr group, via Ekera-HÃ¥stad with s = 1 in a single run:", eh_dlp_schnorr),
+      ("Discrete logarithms, short exponent, via EkerÃ¥-HÃ¥stad with s = 1 in a single run:", eh_dlp_short),
+      ("Discrete logarithms, general, via Shor:", shor_dlp_general),
+      ("Discrete logarithms, general, via EkerÃ¥ with s = 1 in a single run:", eh_dlp_general),
+   ]
+
+   for name, func in datasets:
+      for n in num_bits:
+         test_params = params(n=n, n_e=func(n), windowed_exp=None, windowed_mult=None,
+                        cycle_time=1e-6, reaction_time=1e-6, measure_based_uncomp=True,
+                        windowed=True, deviation_padding=None, gate_error_rate=1e-3,
+                        extra_opts=gsOptions(2, None, None)
+         )
+
+         best_params = find_best(test_params)
+         best_err_corr = CorrectionCode(best_params)
+         cost, qubits = prepare_resources(best_params)
+         total_hours = cost.exp_t / 60 ** 2
+         total_megaqubits = qubits / 10 ** 6
+         total_volume_megaqubitdays = (total_hours / 24) * total_megaqubits
+
+         with open('estimates.csv', 'a', encoding="utf8") as file:
+            file.write(
+            f"{best_params}, {cost}, {qubits}, "
+            f"{str(best_err_corr.temps_inter_lectures())}, "
+            f"{qubits_in_mem(best_err_corr)}, "
+            f"{format_time(correct_all(best_err_corr), True)}, "
+            f"{format_time(cost.exp_t * memory_limited_time(best_err_corr) / best_params.cycle_time, unicode=True)}, "
+            f"{total_hours}, {total_megaqubits}, {total_volume_megaqubitdays}\n"
+            )
+
+         del test_params
