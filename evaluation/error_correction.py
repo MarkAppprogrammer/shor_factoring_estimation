@@ -184,4 +184,57 @@ class CorrectionCode:
 
 # need class to determine the cost of elementary gates
 class ThreeDGaugeCode(CorrectionCode):
-   print("test")
+   """3d gauge color codes, with code switching."""
+
+   def __init__(self, params: params):
+      """Create 3d gauge color codes instance."""
+      # Start and parameters validation
+      super().__init__(params)
+      d = params.extra_opts.distance  # pylint: disable=C0103
+      debitage = params.extra_opts.debitage
+      if not d % 2 == 1:
+         raise ValueError("Distance must be odd.")
+      if debitage not in (1, 2):
+         raise ValueError("'debitage' takes value '1' or '2'.")
+
+      # Geometrical characteristics
+      self.memory_qubits = (d**3 + d)//2
+      self.space_modes = ((1 + 3*d**2)//4 if debitage == 1
+                           else (3*d**2 + 2*d - 3)//2)
+      self.time_modes = 2*d-4 if debitage == 1 else d-2
+
+      # Processor
+      # 2 because 2 logical qubits, 2 because ancillary qubits for measurements
+      self.proc_qubits = 2*2*self.space_modes
+
+      # Logical gates
+      # p_th = 0.0031  # arXiv:1503.08217
+      p_th = 0.0075  # arXiv:1708.07131 ; known decoding
+      # p_th = 0.019   # arXiv:1708.07131 ; no decoding
+      A = 0.033
+      α = 0.516
+      β = 0.822
+      # logical error: arXiv:1503.08217
+      err = A * exp(α * log(params.gate_error_rate/p_th) * d**β)
+      err_2 = 1 - (1 - err)**2
+      # 2 factor: one time for gate, one time for stabilizers measurement
+      # actual correction delayed to next use and neglected.
+      time = 2*params.cycle_time*self.time_modes
+      # T, T^\daggger, H, S, S^\dagger, CNOT and CZ transversal
+      self.gate1 = PhysicalCost(err, time)
+      self.cnot = PhysicalCost(err_2, time)
+      self.init = PhysicalCost(err, time/2)  # 1 pass
+      self.mesure = PhysicalCost(err, params.reaction_time + time/2)
+      self.correct_time = time/2
+
+   @property
+   def and_uncomp(self):
+      """AND uncomputation.
+
+      Measurement-based technique is most of the time more efficient.
+      """
+      if self.params.measure_based_uncomp:
+         return super().and_uncomp
+      else:
+         # Only gates before last CNOT in Fig.4 of arXiv:1805.03662
+         return 5*self.gategen + 3*self.cnot
