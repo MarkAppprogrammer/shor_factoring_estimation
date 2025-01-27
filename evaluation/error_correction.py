@@ -71,6 +71,8 @@ class CorrectionCode:
    
    def add(self, n=None):
       """Cost of full adder modulo 2 (with ancill qubits)"""
+      if n is None:
+         n = self.params.n + self.params.deviation_padding
       return (n - 2) * (self.maj + self.uma) + 3*self.cnot + self.and_complete
    
    def new_adder(self, n=None):
@@ -101,7 +103,7 @@ class CorrectionCode:
    
    @property
    def semi_classical_maj_dag(self):
-      return self.and_uncomp + 2*self.cnot + self.gate1
+      return self.and_uncomp + 2*self.cnot + self.gategen
    
    def semi_clasical_comparison(self, n=None):
       if n is None:
@@ -133,7 +135,7 @@ class CorrectionCode:
          w, n = self.lookup_sizes()
       return (n*self.measure
                + self.unary_ununairy(floor(w/2))
-               # + 2*floor(w/2)*self.gate1  # CZ same cost as CNOT
+               # + 2*floor(w/2)*self.gategen  # CZ same cost as CNOT
                + self.lookup(w=ceil(w/2), n=floor(w/2)))
 
    def look_unlookup(self, w=None, n=None):
@@ -146,11 +148,10 @@ class CorrectionCode:
       n, m = self.params.n, self.params.deviation_padding
       return (m*(self.init + self.measure)
                + m*self.semi_classical_ctrl_add(n + m)
-               + 0.5*m*(self.semi_classical_comparison(n + m) + self.gategen))
+               + 0.5*m*(self.semi_clasical_comparison(n + m) + self.gategen))
    
    def modular_exp_windowed(self):
-      n, ne, we, wm, m, _, _ = self.params.n, self.params.n_e, self.params.windowed_exp,
-      self.params.windowed_mult, self.params.deviation_padding
+      n, ne, we, wm, m = self.params.n, self.params.n_e, self.params.windowed_exp, self.params.windowed_mult, self.params.deviation_padding
 
       nb = 2 * (ne/we) * (n + m)/wm
       classical_error = PhysicalCost(2**(-m), 0)
@@ -173,7 +174,7 @@ class CorrectionCode:
    def temps_inter_lectures(self):
       # Time of one product-addition
       n, wm, m= self.params.n, self.params.windowed_mult, self.params.deviation_padding
-      if self.params.algo.windowed:
+      if self.params.windowed:
          nb = (n + m)/wm
          res = nb*(self.add() + self.look_unlookup())
          return res._replace(p=None)
@@ -221,10 +222,10 @@ class ThreeDGaugeCode(CorrectionCode):
       # actual correction delayed to next use and neglected.
       time = 2*params.cycle_time*self.time_modes
       # T, T^\daggger, H, S, S^\dagger, CNOT and CZ transversal
-      self.gate1 = PhysicalCost(err, time)
+      self.gategen = PhysicalCost(err, time)
       self.cnot = PhysicalCost(err_2, time)
       self.init = PhysicalCost(err, time/2)  # 1 pass
-      self.mesure = PhysicalCost(err, params.reaction_time + time/2)
+      self.measure = PhysicalCost(err, params.reaction_time + time/2)
       self.correct_time = time/2
 
    @property
