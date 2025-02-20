@@ -1,31 +1,57 @@
 import csv
 import matplotlib.pyplot as plt
 
-data = []
+# Read data from file
+data = [line.split(",") for line in open('C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\errorratevariation(1).csv')]
 
-# with open('\\estimates\\errorratevariation(1).csv', 'r') as file:
-#    for line in file:
-#       data.append(line.split(","))
-# file.close()
+newdata = sorted(data, key=lambda l:l[1])
 
-err_rate, n_bits, volumes = zip(*[(exps[0], exps[1], float(exps[6].strip("\n"))) for exps in (line.split(",") for line in open('\\estimates\\errorratevariation(1).csv'))])
+data3d = [[] for _ in range(6)]  
 
-err_rate = [exps[0] for exps in data]
-n_bits = [exps[1] for exps in data]
-volumes = [float(exps[6].strip("\n")) for exps in data]
+current_err = None
+i = 0
 
-fig, ax1 = plt.subplots()
+for array in newdata:
+    err_value = float(array[1])
+    
+    if current_err is None or err_value != current_err:
+        current_err = err_value
+        i += 1
+        i = min(i, 5)
+    
+    data3d[i].append(array)
 
-ax1.set_xlabel('Error Rates')
-ax1.set_ylabel('Number of Bits')
-ax1.plot(err_rate, n_bits)
-ax1.tick_params(axis='y')
+print(data3d)
+data3d.remove(data3d[0])
 
-ax2 = ax1.twinx() 
-ax2.plot(err_rate, volumes, color='tab:red')
-ax1.tick_params(axis='y', labelcolor='tab:red')
-ax1.set_ylabel('Volume (megaqubitdays)')
-plt.title("Simple Line Plot")
+colors = ['red', 'blue', 'green', 'orange', 'purple']
 
-fig.tight_layout()
+for i, arrays in enumerate(data3d):
+   n_bits = [float(exps[0]) for exps in arrays]
+   qubits = [float(exps[5]) for exps in arrays]
+   
+   plt.plot(n_bits, qubits, 
+            label=f'Qubits with error rate: {arrays[0][1]}', 
+            color=colors[i % len(colors)])
+
+
+
+# Extract values
+# n_bits = [float(exps[0]) for exps in newdata]
+# err_rate = [float(exps[1]) for exps in data]
+# volumes = [float(exps[6].strip("\n")) for exps in data]
+# hours = [float(exps[4]) for exps in data]
+# qubits = [float(exps[5]) for exps in newdata]
+
+# print(volumes)
+# print(n_bits)
+# print(err_rate)
+
+# Plot data
+# plt.plot(n_bits, hours, label='hours')
+# plt.plot(n_bits, qubits, label='qubits', color='red')
+plt.xlabel('Number of bits')
+plt.ylabel('Number of qubits (megaqubits)')
+plt.legend()
+plt.title("Not ready yet")
 plt.show()
