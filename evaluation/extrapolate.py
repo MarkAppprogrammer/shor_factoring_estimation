@@ -1,57 +1,34 @@
 import csv
 import matplotlib.pyplot as plt
 
-# Read data from file
-data = [line.split(",") for line in open('C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\errorratevariation(1).csv')]
+data = [line.split(",") for line in open('errorratevariation(1).csv')]
 
-newdata = sorted(data, key=lambda l:l[1])
+bits = [int(exps[0]) for exps in data]   
+qubits = [int(exps[2]) for exps in data] 
+hours = [float(exps[4]) for exps in data] 
+error_rates = sorted(set(float(exps[1]) for exps in data))  
 
-data3d = [[] for _ in range(6)]  
+fig, ax1 = plt.subplots()
 
-current_err = None
-i = 0
+ax2 = ax1.twinx()
 
-for array in newdata:
-    err_value = float(array[1])
-    
-    if current_err is None or err_value != current_err:
-        current_err = err_value
-        i += 1
-        i = min(i, 5)
-    
-    data3d[i].append(array)
+colors = ['b', 'g', 'r', 'c', 'm']
 
-print(data3d)
-data3d.remove(data3d[0])
+for i, err in enumerate(error_rates):
+   x = [bits[j] for j in range(len(data)) if float(data[j][1]) == err]
+   y_qubits = [qubits[j] for j in range(len(data)) if float(data[j][1]) == err]
+   y_hours = [hours[j] for j in range(len(data)) if float(data[j][1]) == err]
 
-colors = ['red', 'blue', 'green', 'orange', 'purple']
+   ax1.plot(x, y_qubits, marker='o', linestyle='-', color=colors[i], label=f'Qubits (err={err:.0e})')
 
-for i, arrays in enumerate(data3d):
-   n_bits = [float(exps[0]) for exps in arrays]
-   qubits = [float(exps[5]) for exps in arrays]
-   
-   plt.plot(n_bits, qubits, 
-            label=f'Qubits with error rate: {arrays[0][1]}', 
-            color=colors[i % len(colors)])
+   ax2.plot(x, y_hours, marker='s', linestyle='--', color=colors[i], label=f'Hours (err={err:.0e})')
 
+ax1.set_xlabel("Bits of RSA Integers")
+# ax1.set_ylabel("Qubits (megaqubits)")
+ax2.set_ylabel("Hours")
 
+ax1.legend(loc="upper left")
+ax2.legend(loc="upper right")
 
-# Extract values
-# n_bits = [float(exps[0]) for exps in newdata]
-# err_rate = [float(exps[1]) for exps in data]
-# volumes = [float(exps[6].strip("\n")) for exps in data]
-# hours = [float(exps[4]) for exps in data]
-# qubits = [float(exps[5]) for exps in newdata]
-
-# print(volumes)
-# print(n_bits)
-# print(err_rate)
-
-# Plot data
-# plt.plot(n_bits, hours, label='hours')
-# plt.plot(n_bits, qubits, label='qubits', color='red')
-plt.xlabel('Number of bits')
-plt.ylabel('Number of qubits (megaqubits)')
-plt.legend()
-plt.title("Not ready yet")
+plt.title("Qubits and Hours vs Size of RSA Integers for Different Error Rates")
 plt.show()
