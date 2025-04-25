@@ -16,3 +16,14 @@ Introductory papers:
 Currently reading:
 1. [[Gid19](https://arxiv.org/pdf/1905.08488)]
 3. [[Zal98](https://arxiv.org/pdf/quant-ph/9806084)]
+
+Directory Overiview:
+
+```
+|-- estimates/
+  |-- ...
+|-- evalulation/
+  |-- ...
+|-- LICENSE
+|-- README.md
+```
