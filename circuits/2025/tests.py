@@ -13,13 +13,13 @@ data = {
 df = pd.DataFrame(data)
 
 """Used for origonal spacetime volume graphs"""
-# fileName = 'C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\openingdata1e3wrunway(1).csv'
+# fileName = 'openingdata1e3wrunway(1).csv'
 # mydata = extract_data(fileName)
 
-# fileNameEx = 'C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\gid+ekera(more).csv'
+# fileNameEx = 'gid+ekera(more).csv'
 # mydataEx = extract_dataEx(fileNameEx)
 
-# fileNameEx2 = 'C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\gou.csv'
+# fileNameEx2 = 'gou.csv'
 # mydataEx2 = extract_dataEx(fileNameEx2)
 
 # dataExtended = {
@@ -30,13 +30,13 @@ df = pd.DataFrame(data)
 # }
 # dataExtended = pd.DataFrame(dataExtended)
 
-fileName = 'C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\openingdata1e3wrunway(1).csv'
+fileName = 'openingdata1e3wrunway(1).csv'
 mydata = extract_data(fileName, onevar=False)
 
-fileNameEx = 'C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\gid+ekera(more).csv'
+fileNameEx = 'gid+ekera(more).csv'
 mydataEx = extract_dataEx(fileNameEx, onevar=False)
 
-fileNameEx2 = 'C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\gou.csv'
+fileNameEx2 = 'gou.csv'
 mydataEx2 = extract_dataEx(fileNameEx2, onevar=False)
 
 """Note GE_time and others refer to spacetimevolume but we kept as time to make it easier"""

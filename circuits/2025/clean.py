@@ -31,5 +31,5 @@ def extract_dataEx(fileName, onevar = True):
    
    return cared_data
 
-# fileName = 'C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\openingdata1e3wrunway(1).csv'
+# fileName = 'openingdata1e3wrunway(1).csv'
 # print(extract_data(fileName=fileName, onevar=False))

@@ -2,7 +2,7 @@
 Structures for cost estimate
 
 Last Updated: 1/26/2025
-@author: Mark Agib
+@author: 
 """
 
 from collections import namedtuple

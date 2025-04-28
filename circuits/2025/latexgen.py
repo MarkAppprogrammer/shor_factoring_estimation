@@ -22,7 +22,7 @@ def generate_latex_table(rows):
    
    return "\n".join(latex)
 
-data = [line.split(",") for line in open('C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\params.csv')]
+data = [line.split(",") for line in open('params.csv')]
 
 datarows = [
    

@@ -6,7 +6,7 @@ from scipy.optimize import curve_fit
 from numpy.polynomial.polynomial import Polynomial
 
 
-data = [line.split(",") for line in open('C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\openingdata1e3wrunway(1).csv')]
+data = [line.split(",") for line in open('openingdata1e3wrunway(1).csv')]
 
 bits = [int(exps[1]) for exps in data]  
 bits = sorted(list(set(bits))) 
@@ -54,7 +54,7 @@ TO-DO:
 # #plt.show()
 
 
-# plt.savefig("C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\graphs\\errorratersa.png", bbox_inches='tight', dpi=300)
+# plt.savefig("graphs/errorratersa.png", bbox_inches='tight', dpi=300)
 # plt.close()
 
 #create a plot w/ each algo and hours and bits 
@@ -76,7 +76,7 @@ markers = ['o', 's', 'v', '^', 'D', 'P']
 colors = ['b', 'g', 'r', 'c', 'm', 'C6']
 
 
-data = [line.split(",") for line in open('C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\openingdata1e3.csv')]
+data = [line.split(",") for line in open('openingdata1e3.csv')]
 new_data = [[] for _ in range(len(algos))]
 
 for i, line in enumerate(data):

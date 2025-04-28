@@ -2,7 +2,7 @@
 Cost Estimate
 
 Last Updated: 1/26/2025
-@author: Mark Agib
+@author:
 """
 
 from math import ceil, isnan, isinf, log
@@ -297,7 +297,7 @@ if __name__ == '__main__':
          total_megaqubits = qubits / 10 ** 6
          total_volume_megaqubitdays = (total_hours / 24) * total_megaqubits
 
-         with open('C:\\Users\\shado\\OneDrive\\Desktop\\QuantumComputing\\Research\\circuits\\Shor1991\\Agib25\\errorrates(2).csv', 'a', encoding="utf8") as file:
+         with open('errorrates(2).csv', 'a', encoding="utf8") as file:
             file.write(
             f"{name}, {best_params.n}, {best_params.gate_error_rate}, {qubits}, {logical_qubit_count(best_params)},"
             # f"{str(best_err_corr.temps_inter_lectures())}, "
