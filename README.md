@@ -1,5 +1,5 @@
 # Circuit Level optimizations
-The following code attempts to calculate the cost of various circuit-level optimizations that can be applied to Shor's algorithm. Similar to the work done in [[GE21](https://arxiv.org/pdf/1905.09749)] and [[GS23](https://arxiv.org/pdf/2103.06159)].  Will be using the new adder from[[Fed25](https://arxiv.org/pdf/2501.07060)]. For any help/questions email me @ agibmark1@gmail.com.
+The following code attempts to calculate the cost of various circuit-level optimizations that can be applied to Shor's algorithm. Similar to the work done in [[GE21](https://arxiv.org/pdf/1905.09749)] and [[GS23](https://arxiv.org/pdf/2103.06159)].  Will be using the new adder from[[Fed25](https://arxiv.org/pdf/2501.07060)]. For any help/questions email me @ 
 
 Introductory papers:
 1. [[VBE96](https://arxiv.org/pdf/quant-ph/9511018)]
